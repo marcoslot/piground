@@ -12,9 +12,10 @@ def first_color_name_to_hex(potential_colors):
 
     return None
 
-result = first_color_name_to_hex(sys.argv)
+if __name__ == "__main__":
+    result = first_color_name_to_hex(sys.argv)
 
-if result is None:
-    print('ff0000')
-else:
-    print(result[1:])
+    if result is None:
+        print('ff0000')
+    else:
+        print(result[1:])

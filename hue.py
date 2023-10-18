@@ -1,6 +1,11 @@
+import sys
 from phue import Bridge
 from pprint import pprint
 
+if len(sys.argv) >= 2:
+    hex_color = sys.argv[1]
+else:
+    hex_color = 'ff0000'
 
 def convertColor(hexCode):
     R = int(hexCode[:2],16)
@@ -32,4 +37,4 @@ lights = b.get_light_objects()
 for light in lights:
     if "Fugato" in light.name:
         light.on = True
-        light.xy = convertColor('FF0000')
+        light.xy = convertColor(hex_color)

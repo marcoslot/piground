@@ -27,6 +27,26 @@ def convert_color(hexCode):
 
     return [firstPos, secondPos]
 
+def is_any_light_on():
+    lights = b.get_light_objects()
+
+    for light in lights:
+        if "Fugato" in light.name and light.on:
+            return True
+
+    return False
+
+def set_lights_colors(hex_colors):
+    lights = b.get_light_objects()
+    num_lights_set = 0
+
+    for light in lights:
+        if "Fugato" in light.name:
+            hex_color = hex_colors[num_lights_set % len(hex_colors)]
+            #light.on = True
+            light.xy = convert_color(hex_color)
+            num_lights_set += 1
+
 def set_lights_color(hex_color):
     lights = b.get_light_objects()
 

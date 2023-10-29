@@ -1,13 +1,14 @@
+#!/usr/bin/python3
 import sys
 from phue import Bridge
 from pprint import pprint
 
-if len(sys.argv) >= 2:
-    hex_color = sys.argv[1]
-else:
-    hex_color = 'ff0000'
+b = Bridge('192.168.87.212')
 
-def convertColor(hexCode):
+# If the app is not registered and the button is not pressed, press the button and call connect() (this only needs to be run a single time)
+b.connect()
+
+def convert_color(hexCode):
     R = int(hexCode[:2],16)
     G = int(hexCode[2:4],16)
     B = int(hexCode[4:6],16)
@@ -26,15 +27,18 @@ def convertColor(hexCode):
 
     return [firstPos, secondPos]
 
-b = Bridge('192.168.87.212')
+def set_lights_color(hex_color):
+    lights = b.get_light_objects()
 
-# If the app is not registered and the button is not pressed, press the button and call connect() (this only needs to be run a single time)
-b.connect()
+    for light in lights:
+        if "Fugato" in light.name:
+            light.on = True
+            light.xy = convert_color(hex_color)
 
-# Get the bridge state (This returns the full dictionary that you can explore)
-lights = b.get_light_objects()
+if __name__ == "__main__":
+    if len(sys.argv) >= 2:
+        hex_color = sys.argv[1]
+    else:
+        hex_color = 'ff0000'
 
-for light in lights:
-    if "Fugato" in light.name:
-        light.on = True
-        light.xy = convertColor(hex_color)
+    set_lights_color(hex_color)

@@ -18,6 +18,7 @@ caption = caption_image(camera_image_path)
 # take the content out of drawings
 caption = caption.replace("a drawing of ", "")
 caption = caption.replace("a piece of paper with ", "")
+caption = caption.replace(" is ", " that is ")
 
 caption = f"a drawing of {caption}"
 
@@ -28,5 +29,10 @@ print(generated_image_url)
 
 urllib.request.urlretrieve(generated_image_url, generated_image_path)
 print(generated_image_path)
+
+os.symlink(camera_image_path, "camera-latest-tmp.png")
+os.rename("camera-latest-tmp.png", "camera-latest.png")
+os.symlink(generated_image_path, "generated-latest-tmp.png")
+os.rename("generated-latest-tmp.png", "generated-latest.png")
 
 display_image_fullscreen(generated_image_path)

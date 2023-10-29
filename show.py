@@ -1,3 +1,4 @@
+#!/usr/bin/python3
 import sys
 import tkinter as tk
 from PIL import Image, ImageTk
@@ -37,6 +38,6 @@ if __name__ == "__main__":
     if len(sys.argv) >= 2:
         image_path = sys.argv[1]
     else:
-        image_path = 'generated.png'
+        image_path = 'generated-latest.png'
 
     display_image_fullscreen(image_path)

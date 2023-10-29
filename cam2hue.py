@@ -2,6 +2,7 @@
 import os
 import math
 import time
+import fire
 from detect_color import get_main_color, color_tuple_to_hex
 from hue import set_lights_color
 
@@ -11,8 +12,7 @@ def color_distance(left,right):
     bd = abs(left[2] - right[2])
     return math.sqrt(rd**2 + gd**2 + bd**2)
 
-if __name__ == "__main__":
-    image_path = f"/tmp/camera-color.png"
+def cam2hue(image_path="/tmp/camera-color.png",loop=False):
     last_color = (0,0,0)
 
     while True:
@@ -25,4 +25,11 @@ if __name__ == "__main__":
             print(hex_color)
             set_lights_color(hex_color)
 
+        if not loop:
+            break
+
         time.sleep(1)
+
+if __name__ == "__main__":
+    image_path = f"/tmp/camera-color.png"
+    fire.Fire(cam2hue)

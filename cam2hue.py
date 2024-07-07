@@ -4,9 +4,11 @@ import math
 import time
 import fire
 import logging
+import socket
 from colorsys import rgb_to_hls
 from detect_color import get_dominant_colors
 from hue import set_lights_color, set_lights_colors, is_any_light_on
+from datetime import datetime
 
 def color_distance(left_color,right_color):
     rd = abs(left_color[0] - right_color[0])
@@ -54,29 +56,33 @@ def cam2hue(image_path="/tmp/camera-color.png",loop=False):
     last_colors = []
 
     while True:
-        if is_any_light_on() or not loop:
-            os.system(f"fswebcam -q -r 320x240 --skip 2 --no-banner --png 9 {image_path}")
-            dominant_colors = get_dominant_colors(image_path, n_colors=5)
-            print(dominant_colors)
+        current_time = datetime.now()
 
-            high_contrast_colors = list(filter(lambda c: color_difference(c) > 20 and color_magnitude(c) > 3, dominant_colors))
-            #high_contrast_colors = list(filter(lambda c: rgb_to_hls(*c)[2] > 0.1 and rgb_to_hls(*c)[1] > 0.1, dominant_colors))
+        try:
+            if not loop or (current_time.hour > 7 and current_time.hour < 22 and is_any_light_on()):
+                os.system(f"fswebcam -q -r 320x240 --skip 2 --no-banner --png 9 {image_path}")
+                dominant_colors = get_dominant_colors(image_path, n_colors=5)
+                logging.info(dominant_colors)
 
-            # Sort by hue
-            high_contrast_colors = sorted(high_contrast_colors, key=lambda c: rgb_to_hls(*c)[0])
+                high_contrast_colors = list(filter(lambda c: color_difference(c) > 20 and color_magnitude(c) > 3, dominant_colors))
 
-            if (len(high_contrast_colors) > 0 and
-                (len(high_contrast_colors) != len(last_colors) or
-                 color_list_distance(high_contrast_colors, last_colors) > 40)):
+                # Sort by hue
+                high_contrast_colors = sorted(high_contrast_colors, key=lambda c: rgb_to_hls(*c)[0])
 
-                hex_colors = list(map(color_tuple_to_hex, high_contrast_colors))
-                logging.info(hex_colors)
-                set_lights_colors(hex_colors)
+                if (len(high_contrast_colors) > 0 and
+                    (len(high_contrast_colors) != len(last_colors) or
+                     color_list_distance(high_contrast_colors, last_colors) > 40)):
 
-                last_colors = high_contrast_colors
+                    hex_colors = list(map(color_tuple_to_hex, high_contrast_colors))
+                    logging.info(hex_colors)
+                    set_lights_colors(hex_colors)
 
-        if not loop:
-            break
+                    last_colors = high_contrast_colors
+
+            if not loop:
+                break
+        except socket.timeout:
+            logging.warning("could not connect to hue bridge")
 
         time.sleep(2)
 
@@ -86,5 +92,4 @@ if __name__ == "__main__":
         level=logging.INFO,
         datefmt='%Y-%m-%d %H:%M:%S')
 
-    image_path = f"/tmp/camera-color.png"
     fire.Fire(cam2hue)

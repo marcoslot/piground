@@ -43,7 +43,7 @@ def set_lights_colors(hex_colors):
     for light in lights:
         if "Fugato" in light.name:
             hex_color = hex_colors[num_lights_set % len(hex_colors)]
-            #light.on = True
+            light.on = True
             light.xy = convert_color(hex_color)
             num_lights_set += 1
 

@@ -18,12 +18,12 @@ def cam2img():
     caption = caption_image(camera_image_path)
 
     # take the content out of drawings
-    caption = caption.replace("a drawing of ", "")
-    caption = caption.replace("a piece of paper with ", "")
-    caption = caption.replace(" is ", " that is ")
-
+    #caption = caption.replace("a drawing of ", "")
+    #caption = caption.replace("a piece of paper with ", "")
+    #caption = caption.replace(" is ", " that is ")
     #caption = f"a drawing of {caption}"
-    caption = f"make a drawing of: {caption}"
+
+    caption = f"{caption} Make a beautiful, funny drawing that cleverly combines the objects in a natural surrounding."
 
     print(caption)
 
